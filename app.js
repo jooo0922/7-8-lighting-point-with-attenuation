@@ -285,7 +285,7 @@ function setupTextures() {
 // 빛에 관한 정보를 프래그먼트 셰이더의 각 유니폼 변수로 업로드해주는 함수
 function setupLights() {
   // gl.uniform3fv(WebGLUniformLocation, 빛 정보 배열)로 프래그먼트 셰이더에 각각의 유니폼 변수에 두 번째 인자를 업로드해줌.
-  gl.uniform3fv(pwgl.uniformLightPositionLoc, [0.0, 10.0, -10.0]); // 빛(광원)의 위치 데이터
+  gl.uniform3fv(pwgl.uniformLightPositionLoc, [0.0, 1.0, 0.0]); // 빛(광원)의 위치 데이터
   gl.uniform3fv(pwgl.uniformAmbientLightColorLoc, [0.3, 0.3, 0.3]); // 앰비언트 광원 성분 * 앰비언트 재질 특성을 사전에 곱한 값
   gl.uniform3fv(pwgl.uniformDiffuseLightColorLoc, [0.9, 0.9, 0.9]); // 디퓨즈 광원 성분 * 디퓨즈 재질 특성을 사전에 곱한 값
   gl.uniform3fv(pwgl.uniformSpecularLightColorLoc, [0.0, 0.0, 0.0]); // 스펙큘러 광원 성분 * 스펙큘러 재질 특성을 사전에 곱한 값
@@ -302,6 +302,18 @@ function setupLights() {
    *
    * setupLights 함수에서는 각각의 데이터들을
    * 프래그먼트 셰이더 내의 유니폼 변수들로 쏴주는 것이 되겠지!
+   */
+
+  /**
+   * 또한, uLightPosition 유니폼 변수는 이번 예제에서 버텍스 셰이더에 위치하고 있음.
+   *
+   * 아무래도 uLightPosition 변수를
+   * 거리값(즉, 광원과 버텍스/프래그먼트 사이의 거리)을 계산할 때에도 사용해야 하다보니,
+   *
+   * 버텍스 셰이더에서 먼저 받아서 눈 좌표계로 변환한 다음,
+   * 프래그먼트 셰이더로 넘겨줘야 정확한 거리값을 계산할 수 있기 때문인 것 같음.
+   *
+   * 자세한 사항은 index.html 버텍스 셰이더 관련 필기 참고
    */
 }
 
@@ -499,4 +511,18 @@ function startup() {
  *
  * 2. 또한, setupLights() 함수에서
  * uSpotDirection에 벡터값을 전달해주는 코드도 필요없겠지.
+ *
+ * 3. 또한, setupLights() 함수에서
+ * 버텍스 셰이더의 uLightPosition 유니폼 변수에 광원의 위치 벡터값을 쏴줄 때,
+ * 이전 예제에서는 스포트 광원을 구현하기 때문에
+ * [0.0, 10.0, -10.0] 이 정도로 넉넉하게 거리를 좀 띄워서 전송해줬는데,
+ *
+ * 점 광원에서 이 정도로 광원을 멀리 배치시켜버리면,
+ * 감쇄를 적용했을 때, 감쇄 효과가 너무 크다보니
+ * 모든 프래그먼트/버텍스 들이 다 어두워보임.
+ * 딱 반사광 만큼의 조명값(앰비언트 성분)만 갖게 되는 셈.
+ *
+ * 그래서 [0.0, 1.0, 0.0] 정도로 광원을 floor와 가깝게 위치시켜서
+ * 프래그먼트/버텍스 위치에 따른 빛의 감쇄가 확연하게 드러나도록
+ * 광원의 위치 벡터값을 쏴줌.
  */
